@@ -9,6 +9,53 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+
+  // Alert Dialog to display errors
+  Future<void> _alertDialogBuilder() async {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+      return AlertDialog(
+        title: Text("Error"),
+        content: Container(
+          child: Text("Random text for now"),
+        ),
+        actions: [
+          FlatButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text("Close Dialog"),
+          )
+        ],
+      );
+    }
+  );
+}
+
+  // Default Form Loading State
+  bool _registerForLoading = false;
+
+  // Form Input Field Values
+  String _registerEmail = "";
+  String _registerPassword = "";
+
+  // Focus Node for Input Fields
+  FocusNode _passwordFocusNode;
+
+  @override
+  void initState() {
+    _passwordFocusNode = FocusNode();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _passwordFocusNode.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,15 +79,31 @@ class _RegisterPageState extends State<RegisterPage> {
                 children: [
                   CustomInput(
                     hintText: "Email...",
+                    onChanged: (value) {
+                      _registerEmail = value;
+                    },
+                    onSubmitted: (value) {
+                      _passwordFocusNode.requestFocus();
+                    },
+                    textInputAction: TextInputAction.next,
                   ),
                   CustomInput(
-                      hintText: "Password..."
+                    hintText: "Password...",
+                    onChanged: (value) {
+                      _registerPassword = value;
+                    },
+                    focusNode: _passwordFocusNode,
+                    isPasswordField: true,
                   ),
                   CustomButton(
                     text: "Create New Account",
                     onPressed: () {
-                      print("Clicked the login button");
+                      // open the dialog
+                      setState(() {
+                        _registerForLoading = true;
+                      });
                     },
+                    isLoading: _registerForLoading,
                   ),
                 ],
               ),
